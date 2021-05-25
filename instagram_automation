@@ -1,0 +1,118 @@
+    
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+import time
+import os
+import sys
+import cv2
+import numpy as np
+from matplotlib import pyplot as plt
+import os
+import time
+import pyautogui
+
+driver_path="C:/Users/datax/Documents/selenium/chromedriver"
+driver=webdriver.Chrome(driver_path)
+    
+
+
+def insta_takip(kullanici_adi,sifre):
+   
+    driver.get("https://www.instagram.com/accounts/login/")
+   
+    time.sleep(5)
+    username_field=driver.find_element_by_name("username")
+    username_field.send_keys(str(kullanici_adi))
+
+    password_field=driver.find_element_by_name("password")
+    password_field.send_keys(str(sifre))
+    password_field.send_keys(Keys.ENTER)
+
+    time.sleep(5)
+    try:
+        time.sleep(5)
+        driver.find_element_by_xpath("/html/body/div[1]/section/main/div/div/div/div/button").click()
+        time.sleep(5)
+        driver.find_element_by_xpath("/html/body/div[4]/div/div/div/div[3]/button[2]").click()
+    except:
+        print("hata verdi")
+
+    time.sleep(2)
+    driver.execute_script("window.scrollTo(0,1400);")
+        
+   
+       
+    #driver.quit()
+
+
+def ss_al():
+    ss=pyautogui.screenshot("ss.jpg")
+global ix
+ix=1000
+def yorum_yap():
+    try:
+        
+        resim=pyautogui.screenshot("ss.jpg")
+        
+        ana_image = cv2.imread("ss.jpg")
+        gray_image = cv2.cvtColor(ana_image, cv2.COLOR_BGR2GRAY)
+       
+        template = cv2.imread('yorum.jpg', 0)
+        width, height = template.shape[::-1] 
+        
+        match = cv2.matchTemplate(gray_image, template, cv2.TM_CCOEFF_NORMED)
+        threshold = 0.8
+        position = np.where(match >= threshold) 
+        print(position)
+        if(position):
+            print("xxx")
+        else:
+            print("fial")
+        
+        for point in zip(*position[::-1]): 
+            cv2.rectangle(ana_image, point, (point[0] + width, point[1] + height), (0, 204, 153), 0)
+        print("point:",point)
+        print("point[0]:",point[0])
+        print("point[1]:",point[1])
+        x=point[0]+width/2
+        y=point[1]+height/2
+        pyautogui.moveTo(x,y)
+        
+
+       
+        time.sleep(1)
+        pyautogui.moveTo(x,y)
+        pyautogui.click()
+        pyautogui.click()
+        pyautogui.write("Arkadaslar rica etsem,sayfamizi takip edip,destek olabilir misiniz ?")
+        pyautogui.press('enter')
+        time.sleep(3)
+        global ix
+        ix=ix+500
+        print(ix)
+        driver.execute_script("window.scrollTo(0,'"+str(ix)+"');")
+    except:
+        
+        ix=ix+200
+        print(ix)
+        driver.execute_script("window.scrollTo(0,'"+str(ix)+"');")
+
+    
+   
+    time.sleep(1)
+
+
+insta_takip("@tncabdurrahman","password")
+ss_al()
+
+time.sleep(4)
+for i in range (27):
+    time.sleep(1)
+    print(i)
+    yorum_yap()
+
+      
+
+
+
+    
